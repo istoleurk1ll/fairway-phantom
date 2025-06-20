@@ -10,7 +10,7 @@ export default function FairwayPhantom() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState("crossingcreeks");
-  const [selectedTee, setSelectedTee] = useState("white");
+  const [selectedTee, setSelectedTee] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [courses, setCourses] = useState({
     crossingcreeks: {
@@ -56,15 +56,20 @@ export default function FairwayPhantom() {
 
   const course = courses[selectedCourse];
   const availableTees = course.tees ? Object.keys(course.tees) : [];
-  const validTee = availableTees.includes(selectedTee) ? selectedTee : availableTees[0];
-  const teeData = course?.tees?.[validTee];
 
-  const holes = Array.from({ length: 18 }, (_, i) => i + 1);
+  useEffect(() => {
+    if (!availableTees.includes(selectedTee)) {
+      setSelectedTee(availableTees[0]);
+    }
+  }, [selectedCourse, availableTees]);
+
+  const teeData = course?.tees?.[selectedTee];
+  const holes = teeData?.pars?.length ? Array.from({ length: teeData.pars.length }, (_, i) => i + 1) : [];
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => setLocation(pos.coords),
-      (err) => setError("Location unavailable")
+      () => setError("Location unavailable")
     );
   }, []);
 
@@ -93,8 +98,10 @@ export default function FairwayPhantom() {
         <select
           value={selectedCourse}
           onChange={(e) => {
-            setSelectedCourse(e.target.value);
-            setSelectedTee("white");
+            const courseKey = e.target.value;
+            const defaultTee = Object.keys(courses[courseKey]?.tees || {})[0];
+            setSelectedCourse(courseKey);
+            setSelectedTee(defaultTee);
           }}
           className="border px-2 py-1 rounded w-full"
         >
@@ -124,52 +131,54 @@ export default function FairwayPhantom() {
         </div>
       )}
 
-      <div className="overflow-auto">
-        <table className="min-w-full border">
-          <thead>
-            <tr>
-              <th className="border px-2">Hole</th>
-              {holes.map((hole) => (
-                <th key={hole} className="border px-2">{hole}</th>
-              ))}
-              <th className="border px-2">Total</th>
-            </tr>
-            <tr>
-              <td className="border px-2 font-bold">Par</td>
-              {teeData?.pars?.map((par, idx) => (
-                <td key={idx} className="border px-2">{par}</td>
-              ))}
-              <td className="border px-2 font-bold">{teeData?.pars?.reduce((a,b) => a + b, 0)}</td>
-            </tr>
-          </thead>
-          <tbody>
-            {players.map((player, idx) => (
-              <tr key={idx}>
-                <td className="border px-2 font-semibold">{player}</td>
+      {teeData && (
+        <div className="overflow-auto">
+          <table className="min-w-full border">
+            <thead>
+              <tr>
+                <th className="border px-2">Hole</th>
                 {holes.map((hole) => (
-                  <td key={hole} className="border px-2">
-                    <input
-                      type="number"
-                      className="w-12 text-center bg-transparent"
-                      value={scores[player]?.[hole] || ""}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value) || 0;
-                        setScores((prev) => ({
-                          ...prev,
-                          [player]: { ...prev[player], [hole]: val },
-                        }));
-                      }}
-                    />
-                  </td>
+                  <th key={hole} className="border px-2">{hole}</th>
                 ))}
-                <td className="border px-2 font-bold">
-                  {Object.values(scores[player] || {}).reduce((a,b) => a + b, 0)}
-                </td>
+                <th className="border px-2">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              <tr>
+                <td className="border px-2 font-bold">Par</td>
+                {teeData.pars.map((par, idx) => (
+                  <td key={idx} className="border px-2">{par}</td>
+                ))}
+                <td className="border px-2 font-bold">{teeData.pars.reduce((a,b) => a + b, 0)}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {players.map((player, idx) => (
+                <tr key={idx}>
+                  <td className="border px-2 font-semibold">{player}</td>
+                  {holes.map((hole) => (
+                    <td key={hole} className="border px-2">
+                      <input
+                        type="number"
+                        className="w-12 text-center bg-transparent"
+                        value={scores[player]?.[hole] || ""}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 0;
+                          setScores((prev) => ({
+                            ...prev,
+                            [player]: { ...prev[player], [hole]: val },
+                          }));
+                        }}
+                      />
+                    </td>
+                  ))}
+                  <td className="border px-2 font-bold">
+                    {Object.values(scores[player] || {}).reduce((a,b) => a + b, 0)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

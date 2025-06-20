@@ -91,10 +91,14 @@ export default function FairwayPhantom() {
   }, []);
 
   const updateScore = (player, hole, value) => {
-    setScores((prev) => ({
-      ...prev,
-      [player]: { ...prev[player], [hole]: value },
-    }));
+    setScores((prev) => {
+      const updated = {
+        ...prev,
+        [player]: { ...prev[player], [hole]: value },
+      };
+      localStorage.setItem("scores", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const addPlayer = () => {

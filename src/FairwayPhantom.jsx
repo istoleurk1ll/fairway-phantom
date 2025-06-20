@@ -166,5 +166,122 @@ export default function FairwayPhantom() {
     }));
   };
 
-  return ( ... ); // UI remains unchanged
+  return (
+    <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Fairway Phantom</h1>
+        <div className="flex gap-2 items-center">
+          <button onClick={() => setDarkMode(!darkMode)} className="px-3 py-1 rounded border">
+            {darkMode ? '☀️ Light' : '🌙 Dark'}
+          </button>
+          <button onClick={createCourse} className="px-3 py-1 rounded border">➕ Add Course</button>
+        </div>
+      </div>
+
+      {weather && (
+        <p className="mb-2 flex items-center gap-2">
+          <MapPin className="w-4 h-4" /> {weather.name} — 🌡️ {weather.main.temp}°F, 💨 {weather.wind.speed} mph
+        </p>
+      )}
+
+      <div className="mb-4">
+        <label className="mr-2">Course:</label>
+        <select
+          value={selectedCourse}
+          onChange={(e) => {
+            const key = e.target.value;
+            setSelectedCourse(key);
+            const firstTee = Object.keys(courses[key].tees)[0];
+            setSelectedTee(firstTee);
+          }}
+          className="border px-2 py-1 rounded"
+        >
+          {Object.entries(courses).map(([key, c]) => (
+            <option key={key} value={key}>{c.name}</option>
+          ))}
+        </select>
+
+        <label className="ml-4 mr-2">Tee:</label>
+        <select
+          value={selectedTee}
+          onChange={(e) => setSelectedTee(e.target.value)}
+          className="border px-2 py-1 rounded"
+        >
+          {availableTees.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="overflow-auto">
+        <table className="w-full border text-center">
+          <thead>
+            <tr>
+              <th className="border px-2">Hole</th>
+              {holes.map((h) => (
+                <th key={h} className="border px-2">{h}</th>
+              ))}
+              <th className="border px-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {players.map((player, idx) => (
+              <tr key={player}>
+                <td className="border px-2">
+                  <div className="flex flex-col items-center">
+                    <span>{avatars[player] || '👤'}</span>
+                    <input
+                      value={player}
+                      onChange={(e) => renamePlayer(idx, e.target.value)}
+                      className="w-full border px-1 rounded text-center mt-1"
+                    />
+                  </div>
+                </td>
+                {holes.map((h) => (
+                  <td key={h} className="border">
+                    <input
+                      type="number"
+                      value={scores[player]?.[h] || ''}
+                      onChange={(e) => updateScore(player, h, e.target.value)}
+                      className="w-12 text-center border-none"
+                    />
+                  </td>
+                ))}
+                <td className="border font-bold">{getTotalScore(player)}</td>
+              </tr>
+            ))}
+            <tr>
+              <td className="border font-bold">Par</td>
+              {teeData.pars.map((par, idx) => (
+                <td key={idx} className="border">{par}</td>
+              ))}
+              <td className="border font-bold">{teeData.pars.reduce((a, b) => a + b, 0)}</td>
+            </tr>
+            <tr>
+              <td className="border font-bold">Yardage</td>
+              {teeData.yardages.map((y, idx) => (
+                <td key={idx} className="border text-sm">{y}</td>
+              ))}
+              <td className="border font-bold text-sm">{teeData.yardages.reduce((a, b) => a + b, 0)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button onClick={addPlayer} className="px-4 py-2 rounded border">➕ Add Player</button>
+        <button onClick={resetRound} className="px-4 py-2 rounded border">🔄 Reset Round</button>
+        <button onClick={exportScorecard} className="px-4 py-2 rounded border">📤 Export Scorecard</button>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-lg font-bold mb-2">🏆 Leaderboard</h2>
+        <ul>
+          {[...players].sort((a, b) => getTotalScore(a) - getTotalScore(b)).map((p, i) => (
+            <li key={p} className="mb-1">{i + 1}. {avatars[p] || '👤'} {p} – {getTotalScore(p)}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }

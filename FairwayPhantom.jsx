@@ -13,7 +13,7 @@ export default function FairwayPhantom() {
       const coords = pos.coords;
       setLocation(coords);
       const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=YOUR_API_KEY&units=imperial`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=ee5aac1be154e1da59237d9e3a2b3f5c&units=imperial`
       );
       const data = await res.json();
       setWeather(data);

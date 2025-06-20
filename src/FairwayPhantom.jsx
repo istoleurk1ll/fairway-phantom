@@ -90,6 +90,9 @@ export default function FairwayPhantom() {
   }, []);
 
   useEffect(() => {
+    // Clear outdated course data to ensure gold tee is gone
+    localStorage.removeItem("courses");
+
     const savedPlayers = JSON.parse(localStorage.getItem("players"));
     const savedScores = JSON.parse(localStorage.getItem("scores"));
     const savedAvatars = JSON.parse(localStorage.getItem("avatars"));
@@ -191,9 +194,10 @@ export default function FairwayPhantom() {
           value={selectedCourse}
           onChange={(e) => {
             const key = e.target.value;
+            const tees = Object.keys(courses[key].tees);
+            const validTee = tees.includes(selectedTee) ? selectedTee : tees[0];
             setSelectedCourse(key);
-            const firstTee = Object.keys(courses[key].tees)[0];
-            setSelectedTee(firstTee);
+            setSelectedTee(validTee);
           }}
           className="border px-2 py-1 rounded"
         >

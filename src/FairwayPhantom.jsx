@@ -58,6 +58,51 @@ export default function FairwayPhantom() {
   });
 
   const holes = Array.from({ length: 18 }, (_, i) => i + 1);
+
+  // Force clean state load to ensure no stale tee options (like Gold)
+  useEffect(() => {
+    setCourses({
+      crossingcreeks: {
+        name: "Crossing Creeks Country Club",
+        tees: {
+          white: {
+            pars: [4,5,4,4,4,3,4,3,5,4,3,5,3,4,3,5,4,5],
+            yardages: [357,488,349,288,344,173,332,148,481,355,189,517,178,316,128,507,243,549]
+          },
+          red: {
+            pars: [4,5,4,4,4,3,4,3,5,4,3,5,3,4,3,5,4,5],
+            yardages: [313,453,298,274,325,139,293,122,434,245,225,417,144,306,116,305,214,459]
+          }
+        }
+      },
+      alpine: {
+        name: "Alpine Golf Course",
+        tees: {
+          blue: {
+            pars: [4,3,5,3,4,4,4,4,3,4,3,5,4,4,4,4,4,4],
+            yardages: [345,120,565,125,370,385,385,360,240,330,160,590,350,345,400,330,351,425]
+          },
+          white: {
+            pars: [4,3,5,3,4,4,4,4,3,4,3,5,4,4,4,4,4,4],
+            yardages: [335,110,550,115,350,367,377,340,225,320,148,570,346,335,350,320,341,395]
+          },
+          red: {
+            pars: [4,3,5,3,4,4,4,4,3,4,3,5,4,4,4,4,4,4],
+            yardages: [320,100,460,100,310,300,346,250,200,300,132,400,300,310,270,300,290,295]
+          }
+        }
+      },
+      default: {
+        name: "Custom Course",
+        tees: {
+          default: {
+            pars: Array(18).fill(4),
+            yardages: Array(18).fill(400),
+          },
+        },
+      },
+    });
+  }, []);
   const course = courses[selectedCourse];
   const availableTees = course.tees ? Object.keys(course.tees) : [];
   const isValidTee = course.tees && course.tees[selectedTee];
@@ -174,7 +219,7 @@ export default function FairwayPhantom() {
   if (!isValidTee || !course.tees[selectedTee]?.pars || !course.tees[selectedTee]?.yardages || course.tees[selectedTee].pars.length !== 18 || course.tees[selectedTee].yardages.length !== 18) return null;
 
   const validTee = availableTees.includes(selectedTee) ? selectedTee : availableTees[0];
-  const teeData = course.tees[validTee];
+  const teeData = course?.tees?.[validTee];
 
   return (
     <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>

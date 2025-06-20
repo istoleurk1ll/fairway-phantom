@@ -74,6 +74,15 @@ export default function FairwayPhantom() {
   const teeData = course.tees?.[selectedTee] || course.tees?.[availableTees[0]] || { pars: [], yardages: [] };
 
   useEffect(() => {
+    if (selectedCourse && courses[selectedCourse]) {
+      const tees = Object.keys(courses[selectedCourse].tees);
+      if (!tees.includes(selectedTee)) {
+        setSelectedTee(tees[0]);
+      }
+    }
+  }, [selectedCourse]);
+
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       try {
         const coords = pos.coords;

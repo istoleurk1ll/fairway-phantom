@@ -61,7 +61,7 @@ export default function FairwayPhantom() {
   const course = courses[selectedCourse];
   const availableTees = course.tees ? Object.keys(course.tees) : [];
   const isValidTee = course.tees && course.tees[selectedTee];
-  const teeData = isValidTee ? course.tees[selectedTee] : course.tees?.[availableTees[0]] || { pars: [], yardages: [] };
+  // teeData moved below after validation
 
   useEffect(() => {
     if (selectedCourse && courses[selectedCourse]) {
@@ -171,7 +171,9 @@ export default function FairwayPhantom() {
     }));
   };
 
-  if (!isValidTee || !teeData.pars || !teeData.yardages || teeData.pars.length !== 18 || teeData.yardages.length !== 18) return null;
+  if (!isValidTee || !course.tees[selectedTee]?.pars || !course.tees[selectedTee]?.yardages || course.tees[selectedTee].pars.length !== 18 || course.tees[selectedTee].yardages.length !== 18) return null;
+
+  const teeData = course.tees[selectedTee];
 
   return (
     <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>

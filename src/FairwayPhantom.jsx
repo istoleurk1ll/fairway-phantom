@@ -125,7 +125,7 @@ export default function FairwayPhantom() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Fairway Phantom</h1>
       <div className="mb-4">
-        <label className=\"mr-2 font-semibold\">Select Course:</label>
+        <label className="mr-2 font-semibold">Select Course:</label>
         <select
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}

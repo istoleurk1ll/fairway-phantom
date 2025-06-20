@@ -173,7 +173,8 @@ export default function FairwayPhantom() {
 
   if (!isValidTee || !course.tees[selectedTee]?.pars || !course.tees[selectedTee]?.yardages || course.tees[selectedTee].pars.length !== 18 || course.tees[selectedTee].yardages.length !== 18) return null;
 
-  const teeData = course.tees[selectedTee];
+  const validTee = availableTees.includes(selectedTee) ? selectedTee : availableTees[0];
+  const teeData = course.tees[validTee];
 
   return (
     <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>

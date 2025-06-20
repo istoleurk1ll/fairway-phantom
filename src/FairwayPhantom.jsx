@@ -10,8 +10,8 @@ export default function FairwayPhantom() {
   const [location, setLocation] = useState(null);
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
-  const [selectedCourse, setSelectedCourse] = useState("default");
-  const [selectedTee, setSelectedTee] = useState("default");
+  const [selectedCourse, setSelectedCourse] = useState("crossingcreeks");
+  const [selectedTee, setSelectedTee] = useState("white");
   const [darkMode, setDarkMode] = useState(false);
   const [courses, setCourses] = useState({
           },
@@ -90,7 +90,10 @@ export default function FairwayPhantom() {
   }, []);
 
   useEffect(() => {
-    // Clear outdated course data to ensure gold tee is gone
+    // Full localStorage wipe to remove lingering gold tee and default course
+    localStorage.removeItem("courses");
+    localStorage.removeItem("selectedCourse");
+    localStorage.removeItem("selectedTee");
     localStorage.removeItem("courses");
 
     const savedPlayers = JSON.parse(localStorage.getItem("players"));

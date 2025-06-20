@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 1rem;
+}
+table {
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+}
+input {
+  padding: 0.25rem;
+}

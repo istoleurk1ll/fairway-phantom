@@ -11,6 +11,7 @@ export default function FairwayPhantom() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState("default");
+  const [selectedTee, setSelectedTee] = useState("default");
   const [selectedTee, setSelectedTee] = useState("gold");
   const [darkMode, setDarkMode] = useState(false);
   const [courses, setCourses] = useState({
@@ -74,7 +75,8 @@ export default function FairwayPhantom() {
 
   const holes = Array.from({ length: 18 }, (_, i) => i + 1);
   const course = courses[selectedCourse];
-  const teeData = course.tees ? course.tees[selectedTee] : course;
+  const availableTees = course.tees ? Object.keys(course.tees) : [];
+  const teeData = course.tees?.[selectedTee] || course.tees?.[availableTees[0]] || { pars: [], yardages: [] };
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -180,7 +182,12 @@ export default function FairwayPhantom() {
       </div>
       <div className="mb-4">
         <label className="mr-2 font-semibold">Select Course:</label>
-        <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="border px-2 py-1 rounded">
+        <select value={selectedCourse} onChange={(e) => {
+            const courseKey = e.target.value;
+            setSelectedCourse(courseKey);
+            const defaultTee = Object.keys(courses[courseKey].tees)[0];
+            setSelectedTee(defaultTee);
+          } className="border px-2 py-1 rounded">
           {Object.entries(courses).map(([key, c]) => (
             <option key={key} value={key}>{c.name}</option>
           ))}

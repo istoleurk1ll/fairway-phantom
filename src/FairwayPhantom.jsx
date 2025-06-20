@@ -12,6 +12,7 @@ export default function FairwayPhantom() {
   const [selectedCourse, setSelectedCourse] = useState("crossingcreeks");
   const [selectedTee, setSelectedTee] = useState("");
   const [darkMode, setDarkMode] = useState(false);
+  const [newPlayerName, setNewPlayerName] = useState("");
   const [courses, setCourses] = useState({
     crossingcreeks: {
       name: "Crossing Creeks Country Club",
@@ -84,8 +85,16 @@ export default function FairwayPhantom() {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   return (
-    <div className={`p-4 min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}>
+    <div className="p-4 min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Fairway Phantom</h1>
         <button onClick={() => setDarkMode(!darkMode)} className="px-2 py-1 border rounded">
@@ -124,6 +133,30 @@ export default function FairwayPhantom() {
         </select>
       </div>
 
+      <div className="mb-4">
+        <label className="block mb-1">Add Player:</label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Enter name"
+            value={newPlayerName}
+            onChange={(e) => setNewPlayerName(e.target.value)}
+            className="border px-2 py-1 rounded w-full"
+          />
+          <button
+            className="bg-blue-500 text-white px-4 py-1 rounded"
+            onClick={() => {
+              if (newPlayerName.trim()) {
+                setPlayers((prev) => [...prev, newPlayerName.trim()]);
+                setNewPlayerName("");
+              }
+            }}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
       {weather && (
         <div className="mb-4 flex items-center">
           <MapPin className="mr-2" />
@@ -153,7 +186,17 @@ export default function FairwayPhantom() {
             <tbody>
               {players.map((player, idx) => (
                 <tr key={idx}>
-                  <td className="border px-2 font-semibold">{player}</td>
+                  <td className="border px-2 font-semibold">
+                    <input
+                      className="bg-transparent w-full"
+                      value={player}
+                      onChange={(e) => {
+                        const updatedPlayers = [...players];
+                        updatedPlayers[idx] = e.target.value;
+                        setPlayers(updatedPlayers);
+                      }}
+                    />
+                  </td>
                   {holes.map((hole) => (
                     <td key={hole} className="border px-2">
                       <input

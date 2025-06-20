@@ -14,22 +14,11 @@ export default function FairwayPhantom() {
   const [selectedTee, setSelectedTee] = useState("default");
   const [darkMode, setDarkMode] = useState(false);
   const [courses, setCourses] = useState({
-    augusta: {
-      name: "Augusta National",
-      tees: {
-        masters: {
-          pars: [4, 5, 4, 3, 4, 3, 4, 5, 4, 4, 4, 5, 3, 4, 5, 3, 4, 4],
-          yardages: [445, 575, 350, 240, 495, 180, 450, 570, 460, 460, 505, 555, 155, 445, 530, 170, 440, 465],
-        },
-      },
+          },
     },
     crossingcreeks: {
       name: "Crossing Creeks Country Club",
       tees: {
-        blue: {
-          pars: [4,5,4,4,4,3,4,3,5,4,3,5,3,4,3,5,4,5],
-          yardages: [377,510,370,307,360,181,345,173,541,359,201,534,197,341,138,507,243,571]
-        },
         white: {
           pars: [4,5,4,4,4,3,4,3,5,4,3,5,3,4,3,5,4,5],
           yardages: [357,488,349,288,344,173,332,148,481,355,189,517,178,316,128,507,243,549]
@@ -71,7 +60,8 @@ export default function FairwayPhantom() {
   const holes = Array.from({ length: 18 }, (_, i) => i + 1);
   const course = courses[selectedCourse];
   const availableTees = course.tees ? Object.keys(course.tees) : [];
-  const teeData = course.tees?.[selectedTee] || course.tees?.[availableTees[0]] || { pars: [], yardages: [] };
+  const isValidTee = course.tees && course.tees[selectedTee];
+  const teeData = isValidTee ? course.tees[selectedTee] : course.tees?.[availableTees[0]] || { pars: [], yardages: [] };
 
   useEffect(() => {
     if (selectedCourse && courses[selectedCourse]) {
@@ -174,6 +164,8 @@ export default function FairwayPhantom() {
       }
     }));
   };
+
+  if (!isValidTee) return null;
 
   return (
     <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>

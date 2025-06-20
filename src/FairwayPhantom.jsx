@@ -47,11 +47,7 @@ export default function FairwayPhantom() {
         }
       }
     },
-    crossingcreeks: {
-      name: "Crossing Creeks Country Club",
-      pars: [4, 5, 4, 4, 4, 3, 4, 3, 5, 4, 3, 5, 3, 4, 3, 5, 4, 5],
-      yardages: [390, 541, 395, 319, 380, 206, 341, 200, 587, 388, 225, 545, 211, 383, 151, 533, 269, 592]
-    },
+    
     default: {
       name: "Generic Course",
       pars: Array(18).fill(4),

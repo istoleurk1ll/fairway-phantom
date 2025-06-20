@@ -171,7 +171,7 @@ export default function FairwayPhantom() {
     }));
   };
 
-  if (!isValidTee) return null;
+  if (!isValidTee || !teeData.pars || !teeData.yardages || teeData.pars.length !== 18 || teeData.yardages.length !== 18) return null;
 
   return (
     <div className={`p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>

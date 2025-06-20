@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 
 export default function FairwayPhantom() {
@@ -6,18 +5,28 @@ export default function FairwayPhantom() {
   const [scores, setScores] = useState({});
   const [location, setLocation] = useState(null);
   const [weather, setWeather] = useState(null);
+  const [error, setError] = useState(null);
 
   const holes = Array.from({ length: 18 }, (_, i) => i + 1);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
-      const coords = pos.coords;
-      setLocation(coords);
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=YOUR_API_KEY&units=imperial`
-      );
-      const data = await res.json();
-      setWeather(data);
+      try {
+        const coords = pos.coords;
+        setLocation(coords);
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=ee5aac1be154e1da59237d9e3a2b3f5c&units=imperial`
+        );
+        if (!res.ok) throw new Error("Weather fetch failed");
+        const data = await res.json();
+        setWeather(data);
+      } catch (err) {
+        console.error("Weather fetch error:", err);
+        setError("Could not load weather data.");
+      }
+    }, (geoErr) => {
+      console.error("Geolocation error:", geoErr);
+      setError("Geolocation not available.");
     });
   }, []);
 
@@ -53,6 +62,9 @@ export default function FairwayPhantom() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Fairway Phantom</h1>
+      {error && (
+        <div className="mb-4 text-red-600">⚠️ {error}</div>
+      )}
       {weather && (
         <div className="mb-4">
           <p>📍 {weather.name}</p>
